@@ -1,7 +1,21 @@
 jobs:
+  CloneRepo:
+    resources:
+      instance-type: C4
+    outputs:
+      repo:
+        type: volume
+    uses: git-checkout@v1
+    with:
+      url: https://github.com/chymchym1905/auto-time-workflow.git
+  
   Infer:
     resources:
-      instance-type: P4000
+      instance-type: C4
+    needs: 
+      - CloneRepo
+    inputs:
+      repo: CloneRepo.outputs.repo
     outputs:
       timedData:
         type: dataset
@@ -10,8 +24,5 @@ jobs:
     uses: script@v1
     with:
       script: |-
-        nvidia-smi
-        python downloadvideo.py "https://www.youtube.com/watch?v=Zdk6sVYZABE" "https://www.youtube.com/watch?v=ppSwStqbhV0"
-        python infer.py
-        python timeruns.py 1 1
-      image: chymchym1905/auto-time:gpuv1
+        ls
+      image: chymchym1905/auto-time:v3
