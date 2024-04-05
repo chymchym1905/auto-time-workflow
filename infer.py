@@ -37,7 +37,9 @@ def infer(vidpath):
     a = vidpath[10:]
     print(a)
     #do not touch
-    outputpath = fr'/outputs/timedData/videos/{a}annotated.avi'
+    if not os.path.exists('videos'):
+        os.makedirs('videos')
+    outputpath = fr'videos/{a}annotated.avi'
     cap = cv2.VideoCapture(vidpath)
     # Get video details
     frame_width = int(cap.get(cv2.CAP_PROP_FRAME_WIDTH))
@@ -95,9 +97,9 @@ def infer(vidpath):
         print('stop')
     cap.release()
     out.release()
-    if not os.path.exists("/outputs/timedData/framedata"):
-        os.makedirs("/outputs/timedData/framedata")
-    with open(f"/outputs/timedData/framedata/{a}.pkl", "wb") as file:
+    if not os.path.exists("framedata"):
+        os.makedirs("framedata")
+    with open(f"framedata/{a}.pkl", "wb") as file:
         pickle.dump(objects_present, file)
 
 if __name__ == '__main__':

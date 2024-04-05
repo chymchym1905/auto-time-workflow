@@ -185,15 +185,15 @@ class TimedResults():
         self.timedresult = reduce(lambda x,y: x.getTime() + y.getTime(), timedresult) if len(timedresult)>1 else timedresult[0].getTime()
     
     def savetime(self, filename):
-        if not os.path.exists("/outputs/timedData/results"):
-            os.makedirs("/outputs/timedData/results")
-        with open(f"/outputs/timedData/results/{filename}.txt", "w") as file:
+        if not os.path.exists("results"):
+            os.makedirs("results")
+        with open(f"results/{filename}.txt", "w") as file:
             file.write(str(self.timedresult))
 
 if __name__ == '__main__':
     num_chambers = sys.argv[1:]
-    for video, framedata in zip(os.listdir("downloads"), os.listdir("outputs/timedData/framedata")):
-        with open(os.path.join("/outputs/timedData/framedata",framedata), "rb") as file:
+    for video, framedata in zip(os.listdir("downloads"), os.listdir("framedata")):
+        with open(os.path.join("framedata",framedata), "rb") as file:
             objects_present = pickle.load(file)
         res = [TimedResults(verify_run(objects_present,int(get_fps(os.path.join("downloads",video))), int(x))) for x in num_chambers]
         for i in res:

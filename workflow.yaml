@@ -24,5 +24,12 @@ jobs:
     uses: script@v1
     with:
       script: |-
-        ls
+        rm -rf /outputs/timedData/*
+        cd /inputs/repo
+        python downloadvideo.py "https://www.youtube.com/watch?v=Zdk6sVYZABE" "https://www.youtube.com/watch?v=ppSwStqbhV0"
+        python infer.py
+        python timeruns.py 1 1
+        cp -R /inputs/repo/downloads /outputs/timedData
+        cp -R /inputs/repo/downloads /outputs/timedData
+        cp -R /inputs/repo/downloads /outputs/timedData
       image: chymchym1905/auto-time:v3
