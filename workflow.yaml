@@ -1,0 +1,17 @@
+jobs:
+  Infer:
+    resources:
+      instance-type: P4000
+    outputs:
+      timedData:
+        type: dataset
+        with: 
+          ref: dsty6wlo4e4shys
+    uses: script@v1
+    with:
+      script: |-
+        nvidia-smi
+        python downloadvideo.py "https://www.youtube.com/watch?v=Zdk6sVYZABE" "https://www.youtube.com/watch?v=ppSwStqbhV0"
+        python infer.py
+        python timeruns.py 1 1
+      image: chymchym1905/auto-time:gpuv1
