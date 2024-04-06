@@ -35,9 +35,9 @@ class Chamber():
         return (self.end_frame - self.start_frame)/self.fps
     
     def getTime(self):
-        assert self.end_frame>0, "End frame must be greater than 0"
-        assert self.start_frame>0, "Start frame must be greater than 0"
-        assert self.end_frame>self.start_frame, "End frame must be greater than start frame"
+        if self.end_frame == 0: return "End frame must be greater than 0"
+        if self.start_frame == 0: return "Start frame must be greater than 0"
+        if self.end_frame<self.start_frame: return "End frame must be greater than start frame"
 
         return (self.end_frame - self.start_frame)/self.fps
 
@@ -133,7 +133,7 @@ def verify_chamber(objectlist: list, framerate, skippedframes=0):
     chamber.start_frame = find_element_index(objectlist, chamber.platform.value, skippedframes)
     skipframes = chamber.start_frame
     if skipframes == None:
-        raise ValueError('Video ended or verification in previous chamber failed. Please check video.')
+        return Chamber(fps=framerate), 0
     while verify_start_frame(objectlist, skipframes, chamber.platform, framerate) == False:
         chamber.start_frame = find_element_index(objectlist, chamber.platform.value, skipframes)
         skipframes += framerate
@@ -182,6 +182,10 @@ def get_fps(video_path):
 
 class TimedResults():
     def __init__(self, timedresult:list[Chamber]):
+        for i in timedresult:
+            if i.end_frame == 0 or i.end_frame<i.start_frame:
+                self.timedresult = f"Chamber {timedresult.index(i)}: chamber corrupted, need to time manually"
+                return
         self.timedresult = reduce(lambda x,y: x.getTime() + y.getTime(), timedresult) if len(timedresult)>1 else timedresult[0].getTime()
     
     def savetime(self, filename):
