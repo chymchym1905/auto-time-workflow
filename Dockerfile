@@ -1,4 +1,4 @@
-FROM ultralytics/ultralytics:latest-cpu
+FROM ultralytics/ultralytics:latest-python
 
 # Install any needed packages specified in requirements.txt
 RUN pip install pytube yt-dlp easyocr
