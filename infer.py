@@ -32,8 +32,6 @@ def check_dirty_frame(res_classify: Results):
 def infer(vidpath):
     #Combine classify and object detect
     #Time video
-    for i in range(torch.cuda.device_count()):
-        print(torch.cuda.get_device_properties(i).name)
     detect_model = YOLO(r'deploymodel/detect.pt').to(device='cuda' if torch.cuda.is_available() else 'cpu')
     classify_model = YOLO(r'deploymodel/classify.pt').to(device='cuda' if torch.cuda.is_available() else 'cpu')
     a = vidpath[10:]
