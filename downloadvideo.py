@@ -14,12 +14,11 @@ def main(videos):
                 # 'cookiefile':cookies,
                 'verbose':True,}
     with yt_dlp.YoutubeDL(ydl_opts) as ydl:
-        # print(json.dumps(ydl.extract_info('https://www.youtube.com/watch?v=Zdk6sVYZABE', download=False),indent=4))
-        try: 
-            for i in videos:
-                ydl.download([i])
-        except Exception as e:
-            print(i, e)
+        # print(json.dumps(ydl.extract_info('"https://www.youtube.com/watch?v=9yj3coh_jJA&t=440s"', download=False),indent=4))
+        for i in videos:
+            try:
+                ydl.download([i])  
+            except: print(f"{i} IS UNAVAILABLE")
 
 if __name__ == '__main__':
     main(sys.argv[1:])
