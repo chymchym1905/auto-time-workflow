@@ -5,7 +5,6 @@ import sys
 import os
 import json
 def main(videos):
-    print(videos)
     ydl_opts = {'paths':{'home':os.path.join(os.getcwd(),"downloads/")},
                 'format':'bv',
                 'outtmpl':'%(title)s.%(ext)s',
@@ -16,7 +15,11 @@ def main(videos):
                 'verbose':True,}
     with yt_dlp.YoutubeDL(ydl_opts) as ydl:
         # print(json.dumps(ydl.extract_info('https://www.youtube.com/watch?v=Zdk6sVYZABE', download=False),indent=4))
-        ydl.download(videos)
+        try: 
+            for i in videos:
+                ydl.download([i])
+        except Exception as e:
+            print(i, e)
 
 if __name__ == '__main__':
     main(sys.argv[1:])
