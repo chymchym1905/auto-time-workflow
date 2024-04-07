@@ -102,6 +102,6 @@ def infer(vidpath):
     with open(f"framedata/{a}.pkl", "wb") as file:
         pickle.dump(objects_present, file)
 
-if __name__ == '__main__':
+def inference():
     for videos in os.listdir("downloads"):
         infer(os.path.join("downloads",videos))

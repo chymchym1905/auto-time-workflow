@@ -194,8 +194,7 @@ class TimedResults():
         with open(f"results/{filename}.txt", "w") as file:
             file.write(str(self.timedresult))
 
-if __name__ == '__main__':
-    num_chambers = sys.argv[1:]
+def timeruns(num_chambers:  list[int]):
     for video, framedata in zip(os.listdir("downloads"), os.listdir("framedata")):
         with open(os.path.join("framedata",framedata), "rb") as file:
             objects_present = pickle.load(file)
