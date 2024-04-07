@@ -13,7 +13,7 @@ def split_list(a_list):
 def main(args):
     ydl_opts = {'paths':{'home':os.path.join(os.getcwd(),"downloads/")},
                 'format':'bv',
-                'outtmpl':'%(title)s.%(ext)s',
+                'outtmpl':'%(id)s.%(ext)s',
                 'overwrite':True,
                 # 'listformats':True,
                 # 'cookiesfrombrowser':('edge',),
@@ -31,8 +31,8 @@ def main(args):
                 print(f"{video} IS UNAVAILABLE")
         print(f"Downloaded videos: {downloadedvideos}")
         print(f"Num chambers: {num_chambers}")
-        infer.inference()
-        timeruns.timeruns(num_chambers)
+        infres = infer.inference()
+        timeruns.timeruns(num_chambers, infres)
 
 if __name__ == '__main__':
     main(sys.argv[1:])

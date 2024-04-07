@@ -194,10 +194,9 @@ class TimedResults():
         with open(f"results/{filename}.txt", "w") as file:
             file.write(str(self.timedresult))
 
-def timeruns(num_chambers:  list[int]):
-    for video, framedata in zip(os.listdir("downloads"), os.listdir("framedata")):
-        with open(os.path.join("framedata",framedata), "rb") as file:
-            objects_present = pickle.load(file)
+def timeruns(num_chambers:  list[int], infres):
+    for video, framedata in zip(os.listdir("downloads"), infres):
+        objects_present = framedata
         res = [TimedResults(verify_run(objects_present,int(get_fps(os.path.join("downloads",video))), int(x))) for x in num_chambers]
         for i in res:
             i.savetime(video)

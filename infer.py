@@ -5,6 +5,7 @@ import numpy as np
 import os
 import torch
 import pickle
+import plot
 
 def checkdirtyframeutil(presentframe):
     nonabyssframes = ['overworld', 'character-screen']
@@ -99,9 +100,11 @@ def infer(vidpath):
     out.release()
     if not os.path.exists("framedata"):
         os.makedirs("framedata")
-    with open(f"framedata/{a}.pkl", "wb") as file:
-        pickle.dump(objects_present, file)
+    plot.plot(objects_present, a)
+    return objects_present
 
 def inference():
+    infres = []
     for videos in os.listdir("downloads"):
-        infer(os.path.join("downloads",videos))
+        infres.append(infer(os.path.join("downloads",videos)))
+    return infres
