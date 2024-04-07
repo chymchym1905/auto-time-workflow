@@ -1,5 +1,6 @@
 from matplotlib.axes import Axes
 import matplotlib.pyplot as plt
+import os
 
 # Sample data (replace this with your actual data)
 def plot(data, filename):
@@ -99,5 +100,6 @@ def plot(data, filename):
 
     plt.grid(False)
     plt.yticks([])  # Hide y-axis ticks
-
+    if not os.path.exists("plots"):
+            os.makedirs("plots")
     plt.savefig(f'plots/{filename}.png')
