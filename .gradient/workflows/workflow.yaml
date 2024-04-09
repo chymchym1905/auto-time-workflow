@@ -1,3 +1,7 @@
+'on':
+  github:
+    branches:
+      only: main
 jobs:
   CloneRepo:
     outputs:
@@ -19,8 +23,8 @@ jobs:
         with:
           ref: dsqxz8zjvp592d5
     resources:
-      instance-type: P4000
+      instance-type: C4
     uses: script@v1
     with:
-      image: chymchym1905/auto-time:gpuv2
+      image: chymchym1905/auto-time:v3
       script: cd /inputs/repo; python checkgpu.py
