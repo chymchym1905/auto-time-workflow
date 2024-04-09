@@ -1,0 +1,26 @@
+jobs:
+  CloneRepo:
+    outputs:
+      repo:
+        type: volume
+    resources:
+      instance-type: C4
+    uses: git-checkout@v1
+    with:
+      url: https://github.com/chymchym1905/auto-time-workflow.git
+  Infer:
+    inputs:
+      repo: CloneRepo.outputs.repo
+    needs:
+    - CloneRepo
+    outputs:
+      timedData:
+        type: dataset
+        with:
+          ref: dsqxz8zjvp592d5
+    resources:
+      instance-type: P4000
+    uses: script@v1
+    with:
+      image: chymchym1905/auto-time:gpuv2
+      script: cd /inputs/repo; python checkgpu.py
