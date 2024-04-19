@@ -1,7 +1,3 @@
-on:
-  github:
-    branches:
-      only: main
 jobs:
   CloneRepo:
     outputs:
@@ -14,7 +10,7 @@ jobs:
       url: context.event.github.url
   Infer:
     inputs:
-      repo: CloneRepo.outputs.repo
+      repo: https://github.com/chymchym1905/auto-time-workflow.git
     needs:
     - CloneRepo
     outputs:
