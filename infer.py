@@ -4,7 +4,7 @@ from ultralytics.engine.results import  Results
 import numpy as np
 import os
 import torch
-import pickle
+from tqdm import tqdm
 import plot
 
 def checkdirtyframeutil(presentframe):
@@ -40,7 +40,7 @@ def infer(vidpath):
     #do not touch
     if not os.path.exists('videos'):
         os.makedirs('videos')
-    outputpath = fr'videos/{a}annotated.avi'
+    outputpath = fr'videos/{a}annotated.mp4'
     cap = cv2.VideoCapture(vidpath)
     # Get video details
     frame_width = int(cap.get(cv2.CAP_PROP_FRAME_WIDTH))
@@ -49,15 +49,14 @@ def infer(vidpath):
     total_frames = int(cap.get(cv2.CAP_PROP_FRAME_COUNT))
     objects_present = []
     # Define codec and create VideoWriter object to save annotated video
-    fourcc = cv2.VideoWriter_fourcc(*'XVID') # Codec for the output video
-    out = cv2.VideoWriter(outputpath, fourcc, fps, (frame_width, frame_height))
+    fourcc = cv2.VideoWriter_fourcc(*'H264') # Codec for the output video
+    out = cv2.VideoWriter(r'videos/temp.mp4', fourcc, fps, (frame_width, frame_height))
     try:
         count = 1
-        while True:
+        for _ in tqdm(range(total_frames), total=total_frames, desc='Processing video'):
             ret, img = cap.read()
             if ret==False:
                 break
-            print(f"{count}/{total_frames}")
             count +=1
             # img = image_resize(img, width=640)
             resultclassify: Results= classify_model.predict(source = img, verbose=False)
@@ -98,6 +97,9 @@ def infer(vidpath):
         print('stop')
     cap.release()
     out.release()
+    if os.path.exists(outputpath):
+        os.remove(outputpath)
+    os.rename('videos/temp.mp4', outputpath)
     if not os.path.exists("framedata"):
         os.makedirs("framedata")
     plot.plot(objects_present, a)

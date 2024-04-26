@@ -13,12 +13,12 @@ def split_list(a_list):
 def main(args):
     ydl_opts = {'paths':{'home':os.path.join(os.getcwd(),"downloads/")},
                 'format':'bv',
-                'outtmpl':'%(id)s.%(ext)s',
+                'outtmpl':'%(title)s.%(ext)s',
                 'overwrite':True,
                 # 'listformats':True,
                 # 'cookiesfrombrowser':('edge',),
                 # 'cookiefile':cookies,
-                'verbose':True,}
+                }
     with yt_dlp.YoutubeDL(ydl_opts) as ydl:
         videos, num_chambers = split_list(args)
         downloadedvideos = []
