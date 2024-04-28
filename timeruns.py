@@ -2,9 +2,7 @@ from enum import Enum
 from collections import Counter 
 import cv2
 import os
-import pickle
 from functools import reduce
-import sys
 
 class Platform(Enum):
     PC = 'skill-icons'
@@ -120,9 +118,9 @@ def verify_run(object_list, fps, numchambers):
     for x,y in zip(starts,ends):
         chambers += [Chamber(start_frame=x, end_frame=y, platform=icon, fps=fps)]
     totalTime = 0
-    for i in chambers:
-        print(i.getTime())
-        totalTime += i.getTime()
+    for i, chamber in enumerate(chambers):
+        print(f'Chamber {i}: {chamber.getTime()}')
+        totalTime += chamber.getTime()
     print('Total time: ',totalTime)
     return chambers
 

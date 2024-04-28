@@ -4,6 +4,7 @@ from ultralytics.engine.results import  Results
 import numpy as np
 import os
 import torch
+import pickle
 from tqdm import tqdm
 import plot
 
@@ -30,17 +31,17 @@ def check_dirty_frame(res_classify: Results):
         return True
     else: return False
 
-def infer(vidpath):
+def infer(vidpath, gpu):
     #Combine classify and object detect
     #Time video
     detect_model = YOLO(r'deploymodel/detect.pt').to(device='cuda' if torch.cuda.is_available() else 'cpu')
     classify_model = YOLO(r'deploymodel/classify.pt').to(device='cuda' if torch.cuda.is_available() else 'cpu')
-    a = vidpath[10:]
-    print(a)
+    video_title = vidpath[10:]
+    print(video_title)
     #do not touch
     if not os.path.exists('videos'):
         os.makedirs('videos')
-    outputpath = fr'videos/{a}annotated.mp4'
+    outputpath = fr'videos/{video_title}annotated.mp4'
     cap = cv2.VideoCapture(vidpath)
     # Get video details
     frame_width = int(cap.get(cv2.CAP_PROP_FRAME_WIDTH))
@@ -49,8 +50,10 @@ def infer(vidpath):
     total_frames = int(cap.get(cv2.CAP_PROP_FRAME_COUNT))
     objects_present = []
     # Define codec and create VideoWriter object to save annotated video
-    fourcc = cv2.VideoWriter_fourcc(*'H264') # Codec for the output video
-    out = cv2.VideoWriter(r'videos/temp.mp4', fourcc, fps, (frame_width, frame_height))
+    codec = 'avc1' if gpu==True else 'XVID'
+    fourcc = cv2.VideoWriter_fourcc(*codec) # Codec for the output video
+    temppath = r'videos/temp.mp4' if gpu==True else r'videos/temp.avi'
+    out = cv2.VideoWriter(temppath, fourcc, fps, (frame_width, frame_height))
     try:
         count = 1
         for _ in tqdm(range(total_frames), total=total_frames, desc='Processing video'):
@@ -74,7 +77,7 @@ def infer(vidpath):
                         resultdetect: Results= detect_model.predict(source = img, verbose=False)
                         resultdetect = resultdetect[0]
                         boxes = resultdetect.boxes
-                        objects_present[-1] += [detect_model.names[int(box.cls)] for box in boxes if round(box.conf.item()*100,2)>40]
+                        objects_present[-1] += [detect_model.names[int(box.cls)] for box in boxes if round(box.conf.item()*100,2)>65]
                         for box in boxes:
                             (x,y,x1,y1) = np.array(box.xyxy.cpu(), dtype=int).squeeze()  # get box coordinates in (left, top, right, bottom) format
                             class_index = box.cls
@@ -99,14 +102,16 @@ def infer(vidpath):
     out.release()
     if os.path.exists(outputpath):
         os.remove(outputpath)
-    os.rename('videos/temp.mp4', outputpath)
+    os.rename(temppath, outputpath)
     if not os.path.exists("framedata"):
         os.makedirs("framedata")
-    plot.plot(objects_present, a)
+    with open(f'framedata/{video_title}.pkl', 'wb') as f:
+        pickle.dump(objects_present, f)
+    plot.plot(objects_present, video_title)
     return objects_present
 
-def inference():
+def inference(gpu):
     infres = []
     for videos in os.listdir("downloads"):
-        infres.append(infer(os.path.join("downloads",videos)))
+        infres.append(infer(os.path.join("downloads",videos), gpu))
     return infres

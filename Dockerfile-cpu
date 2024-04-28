@@ -1,0 +1,15 @@
+FROM ultralytics/ultralytics:latest-cpu
+
+RUN pip install pytube yt-dlp
+# ENV PATH="/opt/miniconda/bin:${PATH}"
+# ARG PATH="/opt/miniconda/bin:${PATH}"
+# WORKDIR /
+# RUN apt-get install wget
+# RUN mkdir -p /opt/conda
+# RUN wget https://repo.anaconda.com/miniconda/Miniconda3-py311_24.3.0-0-Linux-x86_64.sh -O opt/conda/miniconda.sh
+# RUN bash opt/conda/miniconda.sh -b -p /opt/miniconda 
+# RUN rm -rf opt/conda
+# RUN conda install -c conda-forge py-opencv easyocr yt-dlp openh264 -y
+# ENV PYTHONUNBUFFERED=TRUE
+
+CMD ["ls"]

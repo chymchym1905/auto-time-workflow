@@ -3,8 +3,9 @@
 import yt_dlp
 import sys
 import os
-import infer
-import timeruns
+from checkgpu import checkgpu
+from infer import inference
+from timeruns import timeruns
 
 def split_list(a_list):
     half = len(a_list) // 2
@@ -31,8 +32,9 @@ def main(args):
                 print(f"{video} IS UNAVAILABLE")
         print(f"Downloaded videos: {downloadedvideos}")
         print(f"Num chambers: {num_chambers}")
-        infres = infer.inference()
-        timeruns.timeruns(num_chambers, infres)
+        gpu = checkgpu()
+        infres = inference(gpu)
+        timeruns(num_chambers, infres)
 
 if __name__ == '__main__':
     main(sys.argv[1:])
