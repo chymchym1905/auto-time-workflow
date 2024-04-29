@@ -77,7 +77,7 @@ def infer(vidpath, gpu):
                         resultdetect: Results= detect_model.predict(source = img, verbose=False)
                         resultdetect = resultdetect[0]
                         boxes = resultdetect.boxes
-                        objects_present[-1] += [detect_model.names[int(box.cls)] for box in boxes if round(box.conf.item()*100,2)>65]
+                        objects_present[-1] += [detect_model.names[int(box.cls)] for box in boxes if round(box.conf.item()*100,2)>75]
                         for box in boxes:
                             (x,y,x1,y1) = np.array(box.xyxy.cpu(), dtype=int).squeeze()  # get box coordinates in (left, top, right, bottom) format
                             class_index = box.cls
