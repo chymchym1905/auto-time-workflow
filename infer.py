@@ -7,6 +7,7 @@ import torch
 import pickle
 from tqdm import tqdm
 import plot
+import math
 
 def checkdirtyframeutil(presentframe):
     nonabyssframes = ['overworld', 'character-screen']
@@ -46,7 +47,7 @@ def infer(vidpath, gpu):
     # Get video details
     frame_width = int(cap.get(cv2.CAP_PROP_FRAME_WIDTH))
     frame_height = int(cap.get(cv2.CAP_PROP_FRAME_HEIGHT))
-    fps = int(cap.get(cv2.CAP_PROP_FPS))
+    fps = int(math.ceil(cap.get(cv2.CAP_PROP_FPS)))
     total_frames = int(cap.get(cv2.CAP_PROP_FRAME_COUNT))
     objects_present = []
     # Define codec and create VideoWriter object to save annotated video

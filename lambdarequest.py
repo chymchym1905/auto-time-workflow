@@ -7,8 +7,11 @@ team_workspaceapikey = "63498923d43cc1e033514618ccb218"
 
 url = "https://flfrikotoewd33kx5ut57ovuuq0qwomo.lambda-url.us-west-2.on.aws/"
 data = {
-  "videos": ["https://www.youtube.com/watch?v=n2-uhEUGERE"],
-  "num_chambers": [3],
+  "videos": ["https://www.youtube.com/watch?v=EpBQDaIwWJQ",
+             "https://www.youtube.com/watch?v=3Xx-GaWMjaY",
+             "https://www.youtube.com/watch?v=2lph29DPllM",
+             "https://www.youtube.com/watch?v=9i0BcsyqSzQ"],
+  "num_chambers": [3,3,3,3],
   "instance_type": "C5",
   "image": "chymchym1905/auto-time:v4",
   "dataset_version": "dsastc90tuxx622",
