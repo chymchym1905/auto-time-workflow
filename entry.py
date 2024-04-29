@@ -41,7 +41,7 @@ def main(args):
         #         infres.append(pickle.load(f))
         try:
             timeruns(num_chambers, infres)
-        except ValueError as e:
+        except Exception as e:
             print(e)
 
 if __name__ == '__main__':
