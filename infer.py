@@ -57,7 +57,7 @@ def infer(vidpath, gpu):
     out = cv2.VideoWriter(temppath, fourcc, fps, (frame_width, frame_height))
     try:
         count = 1
-        for _ in tqdm(range(total_frames), total=total_frames, desc='Processing video'):
+        for _ in tqdm(range(total_frames), total=total_frames, desc=f'Processing {video_title}'):
             ret, img = cap.read()
             if ret==False:
                 break
