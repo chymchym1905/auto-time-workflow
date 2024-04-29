@@ -52,7 +52,7 @@ def lambda_handler(event, context):
                 },
                 "uses": "script@v1",
                 "with": {
-                    "script": f"cd /inputs/repo; python checkgpu.py; python entry.py {formatted_videos} {formatted_numchamber}; cp -R /inputs/repo/videos /outputs/timedData; cp -R /inputs/repo/results /outputs/timedData; cp -R /inputs/repo/plots /outputs/timedData",
+                    "script": f"cd /inputs/repo; python checkgpu.py; python entry.py {formatted_videos} {formatted_numchamber}; cp -R /inputs/repo/videos /outputs/timedData; cp -R /inputs/repo/results /outputs/timedData; cp -R /inputs/repo/plots /outputs/timedData; cp -R /inputs/repo/framedata /outputs/timedData",
                     "image": image
                 }
             }

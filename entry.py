@@ -3,6 +3,7 @@
 import yt_dlp
 import sys
 import os
+import pickle
 from checkgpu import checkgpu
 from infer import inference
 from timeruns import timeruns
@@ -34,7 +35,14 @@ def main(args):
         print(f"Num chambers: {num_chambers}")
         gpu = checkgpu()
         infres = inference(gpu)
-        timeruns(num_chambers, infres)
+        # infres = []
+        # for file in os.listdir("framedata"):
+        #     with open(os.path.join("framedata",file), 'rb') as f:
+        #         infres.append(pickle.load(f))
+        try:
+            timeruns(num_chambers, infres)
+        except ValueError as e:
+            print(e)
 
 if __name__ == '__main__':
     main(sys.argv[1:])

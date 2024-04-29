@@ -105,24 +105,26 @@ def find_skill_icons(objects: list, icon, gaps, start, end):
                 break
     return skill_icons
             
-def verify_run(object_list, fps, numchambers):
+def verify_run(object_list, fps, numchambers, title):
     icon = find_platform(object_list)
     start, end = find_start_end(object_list, icon)
     gaps = find_gaps(object_list, start, end, numchambers-1)
+    print(title)
     print(gaps)
     starts = find_skill_icons(object_list, icon, gaps, start, end)
     print('Starting frames: ', starts)
     ends =  [x for (x,y) in gaps] + [end]
     print('Ending frames: ',ends)
+    if len(starts) != len(ends): raise ValueError('Bad video error')
     chambers: list[Chamber] = []
     for x,y in zip(starts,ends):
         chambers += [Chamber(start_frame=x, end_frame=y, platform=icon, fps=fps)]
     totalTime = 0
     for i, chamber in enumerate(chambers):
-        print(f'Chamber {i}: {chamber.getTime()}')
+        print(f'Chamber {i+1}: {chamber.getTime()}')
         totalTime += chamber.getTime()
-    print('Total time: ',totalTime)
-    return chambers
+    print('Total time: ',totalTime, '\n')
+    return chambers, totalTime
 
 def get_fps(video_path):
     video_capture = cv2.VideoCapture(video_path)
@@ -131,23 +133,14 @@ def get_fps(video_path):
     
     return fps
 
-class TimedResults():
-    def __init__(self, timedresult:list[Chamber]):
-        for i in timedresult:
-            if i.end_frame == 0 or i.end_frame<i.start_frame:
-                self.timedresult = f"Chamber {timedresult.index(i)}: chamber corrupted, need to time manually"
-                return
-        self.timedresult = reduce(lambda x,y: x.getTime() + y.getTime(), timedresult) if len(timedresult)>1 else timedresult[0].getTime()
-    
-    def savetime(self, filename):
-        if not os.path.exists("results"):
-            os.makedirs("results")
-        with open(f"results/{filename}.txt", "w") as file:
-            file.write(str(self.timedresult))
+def savetime(filename, content):
+    if not os.path.exists("results"):
+        os.makedirs("results")
+    with open(f"results/{filename}.txt", "w") as file:
+        file.write(str(content))
 
 def timeruns(num_chambers:  list[int], infres):
-    for video, framedata in zip(os.listdir("downloads"), infres):
+    for video, framedata, numchamber in zip(os.listdir("downloads"), infres, num_chambers):
         objects_present = framedata
-        res = [TimedResults(verify_run(objects_present,int(get_fps(os.path.join("downloads",video))), int(x))) for x in num_chambers]
-        for i in res:
-            i.savetime(video)
+        res = verify_run(objects_present,int(get_fps(os.path.join("downloads",video))), int(numchamber), video)
+        savetime(video, res[1])
