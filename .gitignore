@@ -1,0 +1,11 @@
+/*
+!/deploymodel/
+!entry.py
+!infer.py
+!timeruns.py
+!Dockerfile*
+!checkgpu.py
+!plot.py
+!.gradient/
+!lambdafunction.py
+!.gitignore
