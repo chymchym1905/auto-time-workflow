@@ -8,6 +8,8 @@ from infer import inference
 from timeruns import timeruns
 import json
 import boto3
+import mimetypes
+from urllib.parse import urlparse, parse_qs
 
 accesskey = os.environ.get("AWS_ACCESS_KEY_ID")
 secretkey = os.environ.get("AWS_SECRET_ACCESS_KEY")
@@ -18,6 +20,26 @@ client = boto3.client(
     aws_access_key_id=accesskey,
     aws_secret_access_key=secretkey,
 )
+
+
+def get_extension_from_url(url):
+    # Parse the URL and extract query parameters
+    parsed_url = urlparse(url)
+    query_params = parse_qs(parsed_url.query)
+
+    # Get the MIME type from the query parameters
+    mime_type = query_params.get("mime", [None])[0]
+
+    if not mime_type:
+        raise ValueError("MIME type not found in URL")
+
+    # Get the file extension based on the MIME type
+    extension = mimetypes.guess_extension(mime_type)
+
+    if not extension:
+        raise ValueError("Could not determine file extension from MIME type")
+
+    return extension
 
 
 def split_list(a_list):
@@ -44,12 +66,12 @@ def main(args):
             continue
         print(f"Downloading {vid['title']}")
         response = requests.get(vid["video"])
-        filepath = f"downloads/{vid['title']}.mp4"
+        filepath = rf"downloads/{vid['id']}{get_extension_from_url(vid['video'])}"
         with open(filepath, "wb") as video_file:
             try:
-                for chunk in response.iter_content(chunk_size=1024):
+                for chunk in response.iter_content(chunk_size=8192):
                     video_file.write(chunk)
-                downloadedvideos += [f"{vid['title']}.mp4"]
+                downloadedvideos += [filepath]
                 num += [num_chambers[i]]
             except Exception as e:
                 print(f"ERROR: {e}")
