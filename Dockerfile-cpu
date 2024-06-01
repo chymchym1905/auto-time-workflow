@@ -1,6 +1,6 @@
 FROM ultralytics/ultralytics:latest-cpu
 
-RUN pip install yt-dlp boto3
+RUN pip install boto3
 # ENV PATH="/opt/miniconda/bin:${PATH}"
 # ARG PATH="/opt/miniconda/bin:${PATH}"
 # WORKDIR /

@@ -1,4 +1,6 @@
 import torch
+
+
 def checkgpu():
     a = torch.cuda.is_available()
     print(a)
