@@ -30,7 +30,7 @@ def main(args):
     response = client.invoke(
         FunctionName="getVideo",
         InvocationType="RequestResponse",
-        Payload=json.dumps({"videos": videos}),
+        Payload=json.dumps({"videos": videos, "inferring": True}),
     )
     payload = json.loads(response["Payload"].read())
     payload = payload[::-1]
@@ -47,7 +47,7 @@ def main(args):
         filepath = f"downloads/{vid['title']}.mp4"
         with open(filepath, "wb") as video_file:
             try:
-                for chunk in response.iter_content():
+                for chunk in response.iter_content(chunk_size=1024):
                     video_file.write(chunk)
                 downloadedvideos += [f"{vid['title']}.mp4"]
                 num += [num_chambers[i]]
