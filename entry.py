@@ -37,6 +37,9 @@ def main(args):
                 print(f"{video} IS UNAVAILABLE")
         print(f"Downloaded videos: {downloadedvideos}")
         print(f"Num chambers: {num}")
+        if len(downloadedvideos) == 0:
+            print("No videos downloaded. Exiting...")
+            sys.exit(1)
         gpu = checkgpu()
         infres = inference(gpu)
         # infres = []
