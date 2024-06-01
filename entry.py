@@ -3,12 +3,13 @@
 import sys
 import os
 import requests
-from checkgpu import *
 from infer import inference
 from timeruns import timeruns
 import json
 import mimetypes
 from urllib.parse import urlparse, parse_qs
+from checkgpu import *
+import random
 
 
 def get_extension_from_url(url):
