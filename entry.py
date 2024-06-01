@@ -3,23 +3,12 @@
 import sys
 import os
 import requests
-from checkgpu import checkgpu
+from checkgpu import *
 from infer import inference
 from timeruns import timeruns
 import json
-import boto3
 import mimetypes
 from urllib.parse import urlparse, parse_qs
-
-accesskey = os.environ.get("AWS_ACCESS_KEY_ID")
-secretkey = os.environ.get("AWS_SECRET_ACCESS_KEY")
-
-boto3.setup_default_session(region_name="us-west-2")
-client = boto3.client(
-    "lambda",
-    aws_access_key_id=accesskey,
-    aws_secret_access_key=secretkey,
-)
 
 
 def get_extension_from_url(url):
