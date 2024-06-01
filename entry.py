@@ -1,12 +1,20 @@
 # pip install yt_dlp
 # pip install https://github.com/seproDev/yt-dlp-ChromeCookieUnlock/archive/main.zip
-import yt_dlp
 import sys
 import os
-import pickle
+import boto3
+import requests
 from checkgpu import checkgpu
 from infer import inference
 from timeruns import timeruns
+import json
+
+boto3.setup_default_session(region_name="us-west-2")
+client = boto3.client(
+    "lambda",
+    aws_access_key_id="AKIAQLPJLO3VXZIMPSWT",
+    aws_secret_access_key="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",
+)
 
 
 def split_list(a_list):
@@ -15,39 +23,45 @@ def split_list(a_list):
 
 
 def main(args):
-    ydl_opts = {
-        "paths": {"home": os.path.join(os.getcwd(), "downloads/")},
-        "format": "bv",
-        "outtmpl": "%(title)s.%(ext)s",
-        "overwrite": True,
-        "format_sort": ["res:1080"],
-        "verbose": True,
-        # 'listformats':True,
-        # 'cookiesfrombrowser':('edge',),
-        # 'cookiefile':cookies,
-    }
-    with yt_dlp.YoutubeDL(ydl_opts) as ydl:
-        videos, num_chambers = split_list(args)
-        downloadedvideos, num = [], []
-        for i, video in enumerate(videos):
+    videos, num_chambers = split_list(args)
+    response = client.invoke(
+        FunctionName="getVideo",
+        InvocationType="RequestResponse",
+        Payload=json.dumps({"videos": videos}),
+    )
+    payload = json.loads(response["Payload"].read())
+    payload = payload[::-1]
+    downloadedvideos, num = [], []
+    if not os.path.exists("downloads"):
+        os.makedirs("downloads")
+    # print(json.dumps(payload, indent=4))
+    for i, vid in enumerate(payload):
+        if vid["error"] != "None":
+            print(f"{vid['error']}")
+            continue
+        print(f"Downloading {vid['title']}")
+        response = requests.get(vid["video"])
+        filepath = f"downloads/{vid['title']}.mp4"
+        with open(filepath, "wb") as video_file:
             try:
-                ydl.download([video])
-                downloadedvideos += [video]
+                for chunk in response.iter_content():
+                    video_file.write(chunk)
+                downloadedvideos += [f"{vid['title']}.mp4"]
                 num += [num_chambers[i]]
-            except:
-                print(f"{video} IS UNAVAILABLE")
-        print(f"Downloaded videos: {downloadedvideos}")
-        print(f"Num chambers: {num}")
-        if len(downloadedvideos) == 0:
-            print("No videos downloaded. Exiting...")
-            sys.exit(1)
-        gpu = checkgpu()
-        infres = inference(gpu)
-        # infres = []
-        # for file in os.listdir("framedata"):
-        #     with open(os.path.join("framedata",file), 'rb') as f:
-        #         infres.append(pickle.load(f))
-        timeruns(num, infres)
+            except Exception as e:
+                print(f"ERROR: {e}")
+    print(f"Downloaded videos: {downloadedvideos}")
+    print(f"Num chambers: {num}")
+    if len(downloadedvideos) == 0:
+        print("No videos downloaded. Exiting...")
+        sys.exit(1)
+    gpu = checkgpu()
+    infres = inference(gpu)
+    # infres = []
+    # for file in os.listdir("framedata"):
+    #     with open(os.path.join("framedata",file), 'rb') as f:
+    #         infres.append(pickle.load(f))
+    timeruns(num, infres)
 
 
 if __name__ == "__main__":
