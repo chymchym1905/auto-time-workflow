@@ -22,6 +22,7 @@ def main(args):
         "overwrite": True,
         "format_sort": ["res:1080"],
         "verbose": True,
+        "proxy": "34.92.250.88:10000",
         # 'listformats':True,
         # 'cookiesfrombrowser':('edge',),
         # 'cookiefile':cookies,
