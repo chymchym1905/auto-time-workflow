@@ -141,6 +141,9 @@ def savetime(filename, content):
 
 def timeruns(num_chambers:  list[int], infres):
     for video, framedata, numchamber in zip(os.listdir("downloads"), infres, num_chambers):
-        objects_present = framedata
-        res = verify_run(objects_present,int(get_fps(os.path.join("downloads",video))), int(numchamber), video)
-        savetime(video, res[1])
+        try:
+            objects_present = framedata
+            res = verify_run(objects_present,int(get_fps(os.path.join("downloads",video))), int(numchamber), video)
+            savetime(video, res[1])
+        except Exception as e:
+            savetime(video, e)

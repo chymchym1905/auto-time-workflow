@@ -21,7 +21,7 @@ def check_dirty_frame(res_classify: Results):
     name, prob = list(res_classify.names.values()), res_classify.probs.data.tolist()
     presentframe  = []
     for i in range(len(prob)):
-        if prob[i]>0.1:
+        if prob[i]>0.1: #add class if prob > 0.1
             presentframe.append(name[i])
     if len(presentframe)>2: #3 or more classes
         return True
