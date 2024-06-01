@@ -1,7 +1,7 @@
 FROM ultralytics/ultralytics:latest
 
 # Install any needed packages specified in requirements.txt
-RUN pip install pytube yt-dlp easyocr
+RUN pip install pytube boto3 easyocr
 RUN pip uninstall opencv-python opencv-python-headless -y
 RUN conda update -n base -c defaults conda -y
 RUN conda install -c conda-forge py-opencv openh264 -y
