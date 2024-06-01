@@ -2,12 +2,12 @@
 # pip install https://github.com/seproDev/yt-dlp-ChromeCookieUnlock/archive/main.zip
 import sys
 import os
-import boto3
 import requests
 from checkgpu import checkgpu
 from infer import inference
 from timeruns import timeruns
 import json
+import boto3
 
 accesskey = os.environ.get("AWS_ACCESS_KEY_ID")
 secretkey = os.environ.get("AWS_SECRET_ACCESS_KEY")
