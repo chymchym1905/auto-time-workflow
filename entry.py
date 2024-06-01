@@ -9,11 +9,14 @@ from infer import inference
 from timeruns import timeruns
 import json
 
+accesskey = os.environ.get("AWS_ACCESS_KEY_ID")
+secretkey = os.environ.get("AWS_SECRET_ACCESS_KEY")
+
 boto3.setup_default_session(region_name="us-west-2")
 client = boto3.client(
     "lambda",
-    aws_access_key_id="AKIAQLPJLO3VXZIMPSWT",
-    aws_secret_access_key="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",
+    aws_access_key_id=accesskey,
+    aws_secret_access_key=secretkey,
 )
 
 
