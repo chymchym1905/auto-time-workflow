@@ -21,6 +21,7 @@ def main(args):
         "outtmpl": "%(title)s.%(ext)s",
         "overwrite": True,
         "format_sort": ["res:1080"],
+        "verbose": True,
         # 'listformats':True,
         # 'cookiesfrombrowser':('edge',),
         # 'cookiefile':cookies,
