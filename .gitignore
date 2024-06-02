@@ -9,3 +9,4 @@
 !.gradient/
 !lambdafunction.py
 !.gitignore
+!train.py
