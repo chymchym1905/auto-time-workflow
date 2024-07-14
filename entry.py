@@ -14,6 +14,12 @@ one_room = ["12-1-1", "12-1-2", "12-2-1", "12-2-2", "12-3-1", "12-3-2"]
 two_rooms = ["12-1", "12-2", "12-3"]
 three_rooms = ["12-top", "12-bot"]
 six_rooms = ["12-all"]
+email = ""
+password = ""
+with open("auth/email.txt", "r") as f:
+    email = f.read()
+with open("auth/password.txt", "r") as f:
+    password = f.read()
 
 
 def split_list(a_list):
@@ -21,12 +27,12 @@ def split_list(a_list):
     return a_list[:half], a_list[half:]
 
 
-def login(email, password):
+def login(userEmail, userPassword):
     url = "https://tgh-server-v2.herokuapp.com/api/authentication"
     response = requests.post(
         url,
         headers={"Content-Type": "application/json; charset=UTF-8"},
-        data=json.dumps({"userEmail": email, "password": password}),
+        data=json.dumps({"userEmail": userEmail, "password": userPassword}),
     )
     if response.status_code == 200:
         json_data = response.json()
@@ -42,7 +48,7 @@ def main(args):
     url = "https://tgh-server-v2.herokuapp.com/api/speedrun-entries/agent-all?page=0&approved=false&sortBy=created_at&sortDir=asc"
     ### 5 most recent approved abyss runs
     # url = "https://tgh-server-v2.herokuapp.com/api/speedrun-entries/agent-all?limit=5&page=0&approved=true&sortBy=created_at&sortDir=desc"
-    authHeaders = login("daugiakien@gmail.com", "Kakashi0\\")
+    authHeaders = login(email, password)
     response: requests.Response = requests.get(
         url,
         headers={"Authorization": authHeaders},
