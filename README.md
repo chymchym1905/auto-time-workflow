@@ -1,4 +1,4 @@
-# ML pipeline used to auto time speedruns
+# ML pipeline use to auto time speedruns
 ## Handmade dataset
 [Object detection dataset](https://universe.roboflow.com/auto-time/autotime)
 
