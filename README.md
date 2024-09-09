@@ -1,5 +1,5 @@
 # ML pipeline use to auto time speedruns
-Model trained using Ultralytics, workflows from Paperspace
+YOLOv8 model, Paperspace workflows
 ## Handmade dataset
 [Object detection dataset](https://universe.roboflow.com/auto-time/autotime)
 
