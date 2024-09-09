@@ -138,7 +138,7 @@ def main(args):
             print(f'Updating run {run["video_link"]} with time {time}')
             run["time"] = time
             run["notes"] = (
-                "Video auto time by chym's bot. Please contact chymchym1905 on discord if result is off by a few frames or completely incorrect"
+                "Video auto time by chym's bot. You can either accept this time or manually time it if it's off by too much."
             )
             updateurl = (
                 "https://tgh-server-v2.herokuapp.com/api/speedrun-entries/update"
