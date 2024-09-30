@@ -183,7 +183,7 @@ def timeruns(num_chambers: list[int], infres):
     return times
 
 
-def timerunsv2(num, filename, inferes):
+def timerunsv2(num, filename, inferes, save=True):
     # try:
     objects_present = inferes
     res = verify_run(
@@ -192,7 +192,8 @@ def timerunsv2(num, filename, inferes):
         int(num),
         filename,
     )
-    savetime(filename, res[1])
+    if save:
+        savetime(filename, res[1])
     return res[1]
 
 

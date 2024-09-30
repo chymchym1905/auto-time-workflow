@@ -1,14 +1,18 @@
 # pip install yt_dlp
 # pip install https://github.com/seproDev/yt-dlp-ChromeCookieUnlock/archive/main.zip
+from typing import List
 import yt_dlp
 import sys
 import os
 import pickle
 import json
 import requests
+import traceback
 from checkgpu import checkgpu
 from infer import getpath, infer, inference
-from timeruns import timeruns, timerunsv2
+from plot import plot
+from timeruns import savetime, timeruns, timerunsv2
+from yt_dlp.utils import download_range_func
 
 one_room = ["12-1-1", "12-1-2", "12-2-1", "12-2-2", "12-3-1", "12-3-2"]
 two_rooms = ["12-1", "12-2", "12-3"]
@@ -16,7 +20,11 @@ three_rooms = ["12-top", "12-bot"]
 six_rooms = ["12-all"]
 email = ""
 password = ""
-with open("auth/email.txt", "r") as f:
+MAINURL = "https://tgh-server-v2.herokuapp.com/api"
+TESTURL = "http://localhost:3001/api"
+# with open("auth/email.txt", "r") as f:
+#     email = f.read()
+with open("auth/testmail.txt", "r") as f:
     email = f.read()
 with open("auth/password.txt", "r") as f:
     password = f.read()
@@ -27,8 +35,7 @@ def split_list(a_list):
     return a_list[:half], a_list[half:]
 
 
-def login(userEmail, userPassword):
-    url = "https://tgh-server-v2.herokuapp.com/api/authentication"
+def login(url, userEmail, userPassword):
     response = requests.post(
         url,
         headers={"Content-Type": "application/json; charset=UTF-8"},
@@ -43,12 +50,16 @@ def login(userEmail, userPassword):
 
 
 def main(args):
-    final_filename = "filename"
+    apiurl = MAINURL
+    if args[0] == "test":
+        apiurl = TESTURL
     ### Unapproved abyss runs
-    url = "https://tgh-server-v2.herokuapp.com/api/speedrun-entries/agent-all?page=0&approved=false&sortBy=created_at&sortDir=asc"
+    # url = f"{apiurl}/speedrun-entries/agent-all?page=0&approved=false&sortBy=created_at&sortDir=asc"
     ### 5 most recent approved abyss runs
-    # url = "https://tgh-server-v2.herokuapp.com/api/speedrun-entries/agent-all?limit=5&page=0&approved=true&sortBy=created_at&sortDir=desc"
-    authHeaders = login(email, password)
+    # url = f"{apiurl}/speedrun-entries/agent-all?limit=5&page=0&approved=true&sortBy=created_at&sortDir=desc"
+    ### time multiple runs
+    url = f"{apiurl}/speedrun-entries/all?competitor=66f8280dec087c8e78b07062&sortBy=created_at&sortDir=asc&limit=10&page=0"
+    authHeaders = login(f"{apiurl}/authentication", email, password)
     response: requests.Response = requests.get(
         url,
         headers={"Authorization": authHeaders},
@@ -58,7 +69,7 @@ def main(args):
         print("No runs to verify")
         sys.exit(1)
     print(runs)
-    videos, num_chambers = [], []
+    videos, num_chambers, vidsegment = [], [], []
     for i in runs:
         if i["speedrun_category"] != "Abyss":
             continue
@@ -71,80 +82,134 @@ def main(args):
             num_chambers += [3]
         elif i["speedrun_subcategory"] in six_rooms:
             num_chambers += [6]
+        if "video_segment" in i:
+            vidsegment += [i["video_segment"]]
+        else:
+            vidsegment += [[]]
 
-    def yt_dlp_monitor(self):
-        nonlocal final_filename
-        final_filename = self.get("filename")
-
-    ydl_opts = {
-        "paths": {"home": os.path.join(os.getcwd(), "downloads/")},
-        "format": "bv",
-        "outtmpl": "%(id)s.%(ext)s",
-        "overwrite": True,
-        "format_sort": ["res:1080"],
-        # "verbose": True,
-        "progress_hooks": [yt_dlp_monitor],
-        # "proxy": "34.92.250.88:10000",
-        # 'listformats':True,
-        # 'cookiesfrombrowser':('edge',),
-        # 'cookiefile':cookies,
-    }
-    infer_res = []
     results = []
-    with yt_dlp.YoutubeDL(ydl_opts) as ydl:
-        downloadedvideos, num = [], []
-        for i, video in enumerate(videos):
-            try:
-                ydl.download([video])
-                downloadedvideos += [video]
-                num += [num_chambers[i]]
-                gpu = checkgpu()
-                print(final_filename)
-                alreadytimed = False
-                for video in os.listdir("results"):
-                    if video[:-4] in final_filename:
-                        print("Video already timed")
-                        alreadytimed = True
-                        with open(f"results/{video}", "r") as f:
-                            results += [int(float(f.read()))]
-                        break
-                if alreadytimed:
-                    continue
-                timeresult = infer(final_filename, gpu)
-                if timeresult == None:
-                    print("file path not found")
-                    continue
-                infer_res.append(timeresult)
-                # infres = inference(gpu)
-                # results = timeruns(num, infer_res)
-                results += [
-                    timerunsv2(num_chambers[i], getpath(final_filename), timeresult)
-                ]
-            except Exception as e:
-                print(e)
-                print(f"{video} cannot be timed. Skipping...")
-        print(f"Downloaded videos: {downloadedvideos}")
-        print(f"Num chambers: {num}")
-        if len(downloadedvideos) == 0:
-            print("No videos downloaded. Exiting...")
-            sys.exit(1)
-        validruns = []
-        for entry in runs:
-            if entry["video_link"] not in downloadedvideos:
-                continue
-            validruns += [entry]
-        print(f"Valid runs: {validruns}; Results: {results}")
-        for run, time in zip(validruns, results):
-            print(f'Updating run {run["video_link"]} with time {time}')
-            run["time"] = time
-            run["notes"] = (
-                "Video auto time by chym's bot. You can either accept this time or manually time it if it's off by too much."
+    for i, video in enumerate(videos):
+        res = timeonevideo(video, num_chambers[i], vidsegment[i])
+        results += [res] if res is not None else []
+
+    for i in results:
+        print(f"Video url: {i['url']}")
+        print(f"Num chambers: {i['num_chambers']}")
+        print(f"Video segment: {i['vid_segment']}")
+        print(f"Time: {i['time']}")
+    if len(results) == 0:
+        print("No videos downloaded. Exiting...")
+        sys.exit(1)
+    validruns = []
+    for entry in runs:
+        if entry["video_link"] not in list(map(lambda x: x["url"], results)):
+            continue
+        validruns += [entry]
+    for run, resdict in zip(validruns, results):
+        print(f'Updating run {run["video_link"]} with time {resdict["time"]}')
+        run["time"] = resdict["time"]
+        run["notes"] = (
+            "Video auto time by chym's bot. You can either accept this time or manually time it if it's off by too much."
+        )
+        updateurl = f"{apiurl}/speedrun-entries/update"
+        requests.post(updateurl, headers={"Authorization": authHeaders}, json=run)
+    print(validruns)
+
+
+def timeonevideo(videourl, numchamber, vidsegment: list[str]):
+    video_result = {
+        "url": videourl,
+        "num_chambers": numchamber,
+        "vid_segment": vidsegment,
+        "objects_present": [],
+        "time": 0,
+    }
+    try:
+        ydl_opts = {
+            "paths": {"home": os.path.join(os.getcwd(), "downloads/")},
+            "format": "bv",
+            "outtmpl": "%(id)s$%(section_start)s-%(section_end)s$.%(ext)s",
+            "overwrite": True,
+            "format_sort": ["res:1080"],
+            # "verbose": True,
+            # "proxy": "34.92.250.88:10000",
+            # 'listformats':True,
+            # 'cookiesfrombrowser':('edge',),
+            # 'cookiefile':cookies,
+        }
+        if vidsegment != []:
+            ydl_opts["download_ranges"] = download_range_func(
+                None,
+                [tuple(map(int, pair.split("-"))) for pair in vidsegment],
             )
-            updateurl = (
-                "https://tgh-server-v2.herokuapp.com/api/speedrun-entries/update"
-            )
-            requests.post(updateurl, headers={"Authorization": authHeaders}, json=run)
-        print(validruns)
+        with yt_dlp.YoutubeDL(ydl_opts) as ydl:
+            ydl.download([videourl])
+            video_id = ydl.extract_info(videourl).get("id", "")
+            gpu = checkgpu()
+            filestotime = getvideosegments(video_id, vidsegment)
+            time = 0
+            alreadytimed = False
+            currsegmenttext = getsegmenttext(vidsegment)
+            for video in os.listdir("results"):
+                filenametocheck = f"{video_id}${currsegmenttext}$.txt"
+                if video == filenametocheck:
+                    print("Video already timed")
+                    alreadytimed = True
+                    with open(f"results/{video}", "r") as f:
+                        video_result["time"] = int(float(f.read()))
+                    break
+            if alreadytimed:
+                return video_result
+            # Process the segments
+            if vidsegment == []:
+                vidsegment = [""]  # for the case where there is no segment
+            for i in filestotime:
+                timeresult = infer(f"downloads/{i}", gpu)
+                video_result["objects_present"] += timeresult
+                segmenttime = timerunsv2(
+                    numchamber / len(vidsegment), i, timeresult, save=False
+                )
+                time += segmenttime
+            video_result["time"] = time
+            plot(video_result["objects_present"], f"{video_id}${currsegmenttext}$")
+            savetime(f"{video_id}${currsegmenttext}$", time)
+
+            # timeresult = infer(final_filename, gpu)  # return objects_present
+            # if timeresult == None:
+            #     print("file path not found")
+            #     return None
+            # video_result["objects_present"] = timeresult
+            # video_result["time"] = timerunsv2(
+            #     numchamber, getpath(final_filename), timeresult
+            # )  # return time
+    except Exception as e:
+        print("Exception occurred:")
+        print(e)
+        print("Call stack:")
+        traceback.print_exc()
+        print(f"{videourl} cannot be timed. Skipping...")
+        return None
+    return video_result
+
+
+# Return video file name that match the segments
+def getvideosegments(video_id, segment: list[str]) -> list[str]:
+    res = []
+    for video in os.listdir("downloads"):
+        segmenttext = video.split("$")[1].split(".")[0]
+        if segment == []:
+            if video_id in video and segmenttext == "NA-NA":
+                return [video]
+        else:
+            if video_id in video and segmenttext in segment:
+                res += [video]
+    return res
+
+
+def getsegmenttext(segment: list[str]) -> str:
+    if segment == []:
+        return "NA-NA"
+    return " ".join(segment)
 
 
 if __name__ == "__main__":

@@ -45,13 +45,7 @@ def check_dirty_frame(res_classify: Results):
 
 
 def getpath(video):
-    pattern = r"downloads[/\\]+(.*)"
-    match = re.search(pattern, video)
-    if match:
-        result = match.group(1)
-        return result
-    else:
-        return None
+    return video.split("downloads/")[1]
 
 
 def infer(vidpath, gpu):
@@ -183,7 +177,7 @@ def infer(vidpath, gpu):
         os.makedirs("framedata")
     with open(f"framedata/{video_title}.pkl", "wb") as f:
         pickle.dump(objects_present, f)
-    plot.plot(objects_present, video_title)
+    # plot.plot(objects_present, video_title)
     return objects_present
 
 
