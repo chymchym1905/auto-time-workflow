@@ -22,10 +22,6 @@ email = ""
 password = ""
 MAINURL = "https://tgh-server-v2.herokuapp.com/api"
 TESTURL = "http://localhost:3001/api"
-# with open("auth/email.txt", "r") as f:
-#     email = f.read()
-with open("auth/testmail.txt", "r") as f:
-    email = f.read()
 with open("auth/password.txt", "r") as f:
     password = f.read()
 
@@ -51,14 +47,19 @@ def login(url, userEmail, userPassword):
 
 def main(args):
     apiurl = MAINURL
-    if args[0] == "test":
+    global email
+    with open("auth/email.txt", "r") as f:
+        email = f.read()
+    if len(args) > 0 and args[0] == "test":
         apiurl = TESTURL
+        with open("auth/testmail.txt", "r") as f:
+            email = f.read()
     ### Unapproved abyss runs
-    # url = f"{apiurl}/speedrun-entries/agent-all?page=0&approved=false&sortBy=created_at&sortDir=asc"
+    url = f"{apiurl}/speedrun-entries/agent-all?page=0&approved=false&sortBy=created_at&sortDir=asc"
     ### 5 most recent approved abyss runs
     # url = f"{apiurl}/speedrun-entries/agent-all?limit=5&page=0&approved=true&sortBy=created_at&sortDir=desc"
     ### time multiple runs
-    url = f"{apiurl}/speedrun-entries/all?competitor=66f8280dec087c8e78b07062&sortBy=created_at&sortDir=asc&limit=10&page=0"
+    # url = f"{apiurl}/speedrun-entries/all?competitor=66f8280dec087c8e78b07062&sortBy=created_at&sortDir=asc&limit=10&page=0"
     authHeaders = login(f"{apiurl}/authentication", email, password)
     response: requests.Response = requests.get(
         url,
