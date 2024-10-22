@@ -55,7 +55,7 @@ def main(args):
         with open("auth/testmail.txt", "r") as f:
             email = f.read()
     ### Unapproved abyss runs
-    url = f"{apiurl}/speedrun-entries/agent-all?page=0&approved=false&sortBy=created_at&sortDir=asc"
+    url = f"{apiurl}/speedrun-entries/agent-all?limit=1000&page=0&approved=false&sortBy=created_at&sortDir=asc"
     ### 5 most recent approved abyss runs
     # url = f"{apiurl}/speedrun-entries/agent-all?limit=5&page=0&approved=true&sortBy=created_at&sortDir=desc"
     ### time multiple runs
