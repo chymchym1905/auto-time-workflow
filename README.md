@@ -7,3 +7,11 @@ YOLOv8 model, Paperspace workflows
 
 In order to run this script, you need might need to install OpenH624 for opencv. Put open264 dll inside 
 `AppData\Local\Programs\Python\Python310\Lib\site-packages\cv2` or the location that contains opencv
+
+Run:
+```
+pip install -U -r requirements.txt
+py entry.py
+```
+
+You need an Agent account or an Admin account on TGH to perform this action
