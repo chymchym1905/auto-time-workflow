@@ -58,7 +58,7 @@ def main(args):
     url = f"{apiurl}/speedrun-entries/agent-all?limit=1000&page=0&approved=false&sortBy=created_at&sortDir=asc"
     ### 5 most recent approved abyss runs
     # url = f"{apiurl}/speedrun-entries/agent-all?limit=5&page=0&approved=true&sortBy=created_at&sortDir=desc"
-    ### time multiple runs
+    ### time runs from a competitor
     # url = f"{apiurl}/speedrun-entries/all?competitor=66f8280dec087c8e78b07062&sortBy=created_at&sortDir=asc&limit=10&page=0"
     authHeaders = login(f"{apiurl}/authentication", email, password)
     response: requests.Response = requests.get(
