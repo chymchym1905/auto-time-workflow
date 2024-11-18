@@ -1,10 +1,7 @@
 yt-dlp
-matplotlib==3.8.3
-numpy==1.26.3
-opencv-python==4.9.0.0
-tqdm==4.66.2
-ultralytics==8.1.28
-torch --index-url https://download.pytorch.org/whl/cu121
-torchvision --index-url https://download.pytorch.org/whl/cu121
-torchaudio --index-url https://download.pytorch.org/whl/cu121
+matplotlib
+numpy
+opencv-python
+tqdm
+ultralytics
 

@@ -11,6 +11,13 @@ In order to run this script, you need might need to install OpenH624 for opencv.
 Run:
 ```
 pip install -U -r requirements.txt
+
+Go to https://pytorch.org/get-started/locally/ and install torch with the corresponding CUDA version
+
+Go to https://github.com/cisco/openh264/releases, download the openh264 dll and put into cv2 package folder
+
+Go to https://ffmpeg.org/, download and add ffmpeg binary to environment variables
+
 py entry.py
 ```
 
