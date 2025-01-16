@@ -48,7 +48,13 @@ def getpath(video):
     return video.split("downloads/")[1]
 
 
-def infer(vidpath, gpu):
+def process_segments(segment: str):
+    arr = segment.split("-")
+    res = (int(arr[0]), int(arr[1]))
+    return res
+
+
+def infer(vidpath, gpu, segment="NA-NA"):
     # Combine classify and object detect
     # Time video
     detect_model = YOLO(r"deploymodel/detect.pt").to(
@@ -64,7 +70,7 @@ def infer(vidpath, gpu):
     # do not touch
     if not os.path.exists("videos"):
         os.makedirs("videos")
-    outputpath = rf"videos/{video_title}annotated.mp4"
+
     cap = cv2.VideoCapture(vidpath)
     # Get video details
     frame_width = int(cap.get(cv2.CAP_PROP_FRAME_WIDTH))
@@ -76,10 +82,27 @@ def infer(vidpath, gpu):
     codec = "avc1" if gpu == True else "XVID"
     fourcc = cv2.VideoWriter_fourcc(*codec)  # Codec for the output video
     # temppath = r'videos/temp.mp4' if gpu==True else r'videos/temp.avi'
-    out = cv2.VideoWriter(outputpath, fourcc, fps, (frame_width, frame_height))
+
     count = 1
+
+    start_frame = 0
+    end_frame = total_frames
+    if segment != "NA-NA":
+        processed_segments = process_segments(segment)
+        start_frame = int(processed_segments[0] * fps)
+        end_frame = int(processed_segments[1] * fps)
+    cap.set(cv2.CAP_PROP_POS_FRAMES, start_frame)
+    frames_to_process = end_frame - start_frame + 1
+    outputpath = rf"videos/{video_title}${segment}$annotated.mp4"
+    print(
+        f"Processing frames {start_frame} to {end_frame} (total: {frames_to_process})"
+    )
+    out = cv2.VideoWriter(outputpath, fourcc, fps, (frame_width, frame_height))
+
     for _ in tqdm(
-        range(total_frames), total=total_frames, desc=f"Processing {video_title}"
+        range(start_frame, end_frame + 1),
+        total=frames_to_process,
+        desc=f"Processing {video_title}",
     ):
         ret, img = cap.read()
         if ret == False:
@@ -175,7 +198,7 @@ def infer(vidpath, gpu):
     # os.rename(temppath, outputpath)
     if not os.path.exists("framedata"):
         os.makedirs("framedata")
-    with open(f"framedata/{video_title}.pkl", "wb") as f:
+    with open(f"framedata/{video_title}${segment}$.pkl", "wb") as f:
         pickle.dump(objects_present, f)
     # plot.plot(objects_present, video_title)
     return objects_present

@@ -55,7 +55,7 @@ def main(args):
         with open("auth/testmail.txt", "r") as f:
             email = f.read()
     ### Unapproved abyss runs
-    url = f"{apiurl}/speedrun-entries/agent-all?limit=1000&page=0&approved=false&sortBy=created_at&sortDir=asc"
+    url = f"{apiurl}/speedrun-entries/agent-all?limit=1000&speedrun_category=Abyss&page=0&approved=false&sortBy=created_at&sortDir=asc"
     ### 5 most recent approved abyss runs
     # url = f"{apiurl}/speedrun-entries/agent-all?limit=5&page=0&approved=true&sortBy=created_at&sortDir=desc"
     ### time runs from a competitor
@@ -129,7 +129,7 @@ def timeonevideo(videourl, numchamber, vidsegment: list[str]):
         ydl_opts = {
             "paths": {"home": os.path.join(os.getcwd(), "downloads/")},
             "format": "bv",
-            "outtmpl": "%(id)s$%(section_start)s-%(section_end)s$.%(ext)s",
+            "outtmpl": "%(id)s.%(ext)s",
             "overwrite": True,
             "format_sort": ["res:1080"],
             # "verbose": True,
@@ -138,16 +138,12 @@ def timeonevideo(videourl, numchamber, vidsegment: list[str]):
             # 'cookiesfrombrowser':('edge',),
             # 'cookiefile':cookies,
         }
-        if vidsegment != []:
-            ydl_opts["download_ranges"] = download_range_func(
-                None,
-                [tuple(map(int, pair.split("-"))) for pair in vidsegment],
-            )
         with yt_dlp.YoutubeDL(ydl_opts) as ydl:
             ydl.download([videourl])
             video_id = ydl.extract_info(videourl).get("id", "")
             gpu = checkgpu()
-            filestotime = getvideosegments(video_id, vidsegment)
+            # filestotime = getvideosegmentsfromfilename(video_id, vidsegment)
+            filename = getvideofilename(video_id)
             time = 0
             alreadytimed = False
             currsegmenttext = getsegmenttext(vidsegment)
@@ -162,13 +158,18 @@ def timeonevideo(videourl, numchamber, vidsegment: list[str]):
             if alreadytimed:
                 return video_result
             # Process the segments
+            # processed_segments = process_segments(vidsegment)
             if vidsegment == []:
-                vidsegment = [""]  # for the case where there is no segment
-            for i in filestotime:
-                timeresult = infer(f"downloads/{i}", gpu)
+                vidsegment = ["NA-NA"]  # for the case where there is no segment
+            for index, segmentvalue in enumerate(vidsegment):
+                timeresult = infer(f"downloads/{filename}", gpu, vidsegment[index])
                 video_result["objects_present"] += timeresult
                 segmenttime = timerunsv2(
-                    numchamber / len(vidsegment), i, timeresult, save=False
+                    numchamber / len(vidsegment),
+                    filename,
+                    createfilenamewithsegment(filename, segmentvalue),
+                    timeresult,
+                    save=True,
                 )
                 time += segmenttime
             video_result["time"] = time
@@ -194,7 +195,7 @@ def timeonevideo(videourl, numchamber, vidsegment: list[str]):
 
 
 # Return video file name that match the segments
-def getvideosegments(video_id, segment: list[str]) -> list[str]:
+def getvideosegmentsfromfilename(video_id, segment: list[str]) -> list[str]:
     res = []
     for video in os.listdir("downloads"):
         segmenttext = video.split("$")[1].split(".")[0]
@@ -205,6 +206,18 @@ def getvideosegments(video_id, segment: list[str]) -> list[str]:
             if video_id in video and segmenttext in segment:
                 res += [video]
     return res
+
+
+def createfilenamewithsegment(filename, segment):
+    file = filename.split(".")
+    return f"{file[0]}${segment}$.{file[1]}"
+
+
+def getvideofilename(video_id):
+    for video in os.listdir("downloads"):
+        if video_id in video:
+            return video
+    return None
 
 
 def getsegmenttext(segment: list[str]) -> str:
