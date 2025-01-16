@@ -144,7 +144,8 @@ def infer(vidpath, gpu, segment="NA-NA"):
                     objects_present[-1] += [
                         detect_model.names[int(box.cls)]
                         for box in boxes
-                        if round(box.conf.item() * 100, 2) > 75
+                        if round(box.conf.item() * 100, 2)
+                        > 30  # confidence of objective text & skill icons
                     ]
                     for box in boxes:
                         (x, y, x1, y1) = np.array(

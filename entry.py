@@ -157,8 +157,6 @@ def timeonevideo(videourl, numchamber, vidsegment: list[str]):
                     break
             if alreadytimed:
                 return video_result
-            # Process the segments
-            # processed_segments = process_segments(vidsegment)
             if vidsegment == []:
                 vidsegment = ["NA-NA"]  # for the case where there is no segment
             for index, segmentvalue in enumerate(vidsegment):
@@ -174,7 +172,7 @@ def timeonevideo(videourl, numchamber, vidsegment: list[str]):
                 time += segmenttime
             video_result["time"] = time
             plot(video_result["objects_present"], f"{video_id}${currsegmenttext}$")
-            savetime(f"{video_id}${currsegmenttext}$", time)
+            # savetime(f"{video_id}${currsegmenttext}$", time)
 
             # timeresult = infer(final_filename, gpu)  # return objects_present
             # if timeresult == None:
