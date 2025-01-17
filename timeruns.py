@@ -187,10 +187,10 @@ def timerunsv2(num, filename, filenamewithsegment, inferes, save=True):
     # try:
     objects_present = inferes
     res = verify_run(
-        objects_present,
-        int(get_fps(os.path.join("downloads", filename))),
-        int(num),
-        filename,
+        object_list=objects_present,
+        fps=int(get_fps(os.path.join("downloads", filename))),
+        numchambers=int(num),
+        title=filename,
     )
     if save:
         savetime(filenamewithsegment, res[1])

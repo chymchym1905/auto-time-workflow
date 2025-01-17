@@ -65,13 +65,13 @@ def main(args):
         url,
         headers={"Authorization": authHeaders},
     )
-    runs = response.json()["entries"]["rows"]
-    if runs == []:
+    rawAPIentries = response.json()["entries"]["rows"]
+    if rawAPIentries == []:
         print("No runs to verify")
         sys.exit(1)
-    print(runs)
+    print(rawAPIentries)
     videos, num_chambers, vidsegment = [], [], []
-    for i in runs:
+    for i in rawAPIentries:
         if i["speedrun_category"] != "Abyss":
             continue
         videos += [i["video_link"]]
@@ -88,25 +88,25 @@ def main(args):
         else:
             vidsegment += [[]]
 
-    results = []
+    timedResults = []
     for i, video in enumerate(videos):
         res = timeonevideo(video, num_chambers[i], vidsegment[i])
-        results += [res] if res is not None else []
+        timedResults += [res] if res is not None else []
 
-    for i in results:
+    for i in timedResults:
         print(f"Video url: {i['url']}")
         print(f"Num chambers: {i['num_chambers']}")
         print(f"Video segment: {i['vid_segment']}")
         print(f"Time: {i['time']}")
-    if len(results) == 0:
+    if len(timedResults) == 0:
         print("No videos downloaded. Exiting...")
         sys.exit(1)
-    validruns = []
-    for entry in runs:
-        if entry["video_link"] not in list(map(lambda x: x["url"], results)):
+    validEntries = []
+    for entry in rawAPIentries:
+        if entry["video_link"] not in list(map(lambda x: x["url"], timedResults)):
             continue
-        validruns += [entry]
-    for run, resdict in zip(validruns, results):
+        validEntries += [entry]
+    for run, resdict in zip(validEntries, timedResults):
         print(f'Updating run {run["video_link"]} with time {resdict["time"]}')
         run["time"] = resdict["time"]
         run["notes"] = (
@@ -114,7 +114,7 @@ def main(args):
         )
         updateurl = f"{apiurl}/speedrun-entries/update"
         requests.post(updateurl, headers={"Authorization": authHeaders}, json=run)
-    print(validruns)
+    print(validEntries)
 
 
 def timeonevideo(videourl, numchamber, vidsegment: list[str]):
@@ -142,24 +142,21 @@ def timeonevideo(videourl, numchamber, vidsegment: list[str]):
             ydl.download([videourl])
             video_id = ydl.extract_info(videourl).get("id", "")
             gpu = checkgpu()
-            # filestotime = getvideosegmentsfromfilename(video_id, vidsegment)
             filename = getvideofilename(video_id)
             time = 0
-            alreadytimed = False
             currsegmenttext = getsegmenttext(vidsegment)
-            for video in os.listdir("results"):
-                filenametocheck = f"{video_id}${currsegmenttext}$.txt"
-                if video == filenametocheck:
-                    print("Video already timed")
-                    alreadytimed = True
-                    with open(f"results/{video}", "r") as f:
-                        video_result["time"] = int(float(f.read()))
-                    break
+            alreadytimed, video_result["time"] = checkVideoStatus(
+                video_id, currsegmenttext
+            )
             if alreadytimed:
                 return video_result
             if vidsegment == []:
                 vidsegment = ["NA-NA"]  # for the case where there is no segment
             for index, segmentvalue in enumerate(vidsegment):
+                alreadytimed, segmenttime = checkVideoStatus(video_id, segmentvalue)
+                if alreadytimed:
+                    time += segmenttime
+                    continue
                 timeresult = infer(f"downloads/{filename}", gpu, vidsegment[index])
                 video_result["objects_present"] += timeresult
                 segmenttime = timerunsv2(
@@ -167,12 +164,12 @@ def timeonevideo(videourl, numchamber, vidsegment: list[str]):
                     filename,
                     createfilenamewithsegment(filename, segmentvalue),
                     timeresult,
-                    save=True,
+                    save=True if len(vidsegment) > 1 else False,
                 )
                 time += segmenttime
             video_result["time"] = time
             plot(video_result["objects_present"], f"{video_id}${currsegmenttext}$")
-            # savetime(f"{video_id}${currsegmenttext}$", time)
+            savetime(f"{video_id}${currsegmenttext}$", time)
 
             # timeresult = infer(final_filename, gpu)  # return objects_present
             # if timeresult == None:
@@ -192,18 +189,24 @@ def timeonevideo(videourl, numchamber, vidsegment: list[str]):
     return video_result
 
 
-# Return video file name that match the segments
-def getvideosegmentsfromfilename(video_id, segment: list[str]) -> list[str]:
-    res = []
-    for video in os.listdir("downloads"):
-        segmenttext = video.split("$")[1].split(".")[0]
-        if segment == []:
-            if video_id in video and segmenttext == "NA-NA":
-                return [video]
-        else:
-            if video_id in video and segmenttext in segment:
-                res += [video]
-    return res
+def checkVideoStatus(vidid, segmenttext):
+    alreadytimed = False
+    time = 0
+    for video in os.listdir("results"):
+        segment = ""
+        try:
+            segment = video.split("$")[1]
+        except:
+            segment = ""
+        if vidid in video and (
+            segment == segmenttext or (segmenttext == "NA-NA" and segment == "")
+        ):
+            alreadytimed = True
+            with open(f"results/{video}", "r") as f:
+                time = int(float(f.read()))
+                print("Video already timed: ", time)
+            break
+    return (alreadytimed, time)
 
 
 def createfilenamewithsegment(filename, segment):
