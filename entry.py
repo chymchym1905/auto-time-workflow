@@ -86,7 +86,7 @@ def main(args):
         if "video_segment" in i:
             vidsegment += [i["video_segment"]]
         else:
-            vidsegment += [[]]
+            vidsegment += [["NA-NA"]]
 
     timedResults = []
     for i, video in enumerate(videos):
@@ -144,7 +144,7 @@ def timeonevideo(videourl, numchamber, vidsegment: list[str]):
             gpu = checkgpu()
             filename = getvideofilename(video_id)
             time = 0
-            currsegmenttext = getsegmenttext(vidsegment)
+            currsegmenttext = " ".join(vidsegment)
             alreadytimed, video_result["time"] = checkVideoStatus(
                 video_id, currsegmenttext
             )
@@ -170,15 +170,6 @@ def timeonevideo(videourl, numchamber, vidsegment: list[str]):
             video_result["time"] = time
             plot(video_result["objects_present"], f"{video_id}${currsegmenttext}$")
             savetime(f"{video_id}${currsegmenttext}$", time)
-
-            # timeresult = infer(final_filename, gpu)  # return objects_present
-            # if timeresult == None:
-            #     print("file path not found")
-            #     return None
-            # video_result["objects_present"] = timeresult
-            # video_result["time"] = timerunsv2(
-            #     numchamber, getpath(final_filename), timeresult
-            # )  # return time
     except Exception as e:
         print("Exception occurred:")
         print(e)
@@ -209,22 +200,13 @@ def checkVideoStatus(vidid, segmenttext):
     return (alreadytimed, time)
 
 
-def createfilenamewithsegment(filename, segment):
-    file = filename.split(".")
-    return f"{file[0]}${segment}$.{file[1]}"
+def createfilenamewithsegment(filename, segment) -> str:
+    ### filename = videoid.ext
+    return f"{filename.split('.')[0]}${segment}$.{filename.split('.')[1]}"
 
 
-def getvideofilename(video_id):
-    for video in os.listdir("downloads"):
-        if video_id in video:
-            return video
-    return None
-
-
-def getsegmenttext(segment: list[str]) -> str:
-    if segment == []:
-        return "NA-NA"
-    return " ".join(segment)
+def getvideofilename(video_id) -> str:
+    return next((video for video in os.listdir("downloads") if video_id in video), None)
 
 
 if __name__ == "__main__":

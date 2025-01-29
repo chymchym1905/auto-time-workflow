@@ -1,6 +1,6 @@
 FROM ultralytics/ultralytics:latest-cpu
 
-RUN pip install pytube yt-dlp
+RUN pip install yt-dlp
 # ENV PATH="/opt/miniconda/bin:${PATH}"
 # ARG PATH="/opt/miniconda/bin:${PATH}"
 # WORKDIR /
