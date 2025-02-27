@@ -9,7 +9,7 @@ In order to run this script, you need might need to install OpenH624 for opencv.
 `AppData\Local\Programs\Python\Python310\Lib\site-packages\cv2` or the location that contains opencv
 
 Run:
-```
+```cmd
 pip install -U -r requirements.txt
 
 Go to https://pytorch.org/get-started/locally/ and install torch with the corresponding CUDA version
