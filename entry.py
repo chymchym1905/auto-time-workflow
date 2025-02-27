@@ -20,7 +20,7 @@ three_rooms = ["12-top", "12-bot"]
 six_rooms = ["12-all"]
 email = ""
 password = ""
-MAINURL = "https://tgh-server-v2.herokuapp.com/api"
+MAINURL = "https://genshin.tghofficial.com/api"
 TESTURL = "http://localhost:3001/api"
 with open("auth/password.txt", "r") as f:
     password = f.read()
@@ -200,8 +200,9 @@ def checkVideoStatus(vidid, segmenttext):
     return (alreadytimed, time)
 
 
-def createfilenamewithsegment(filename, segment) -> str:
+def createfilenamewithsegment(filename: str, segment: str) -> str:
     ### filename = videoid.ext
+    ### segment format videoid$start-end$.ext
     return f"{filename.split('.')[0]}${segment}$.{filename.split('.')[1]}"
 
 

@@ -103,6 +103,8 @@ def infer(vidpath, gpu, segment="NA-NA"):
         range(start_frame, end_frame + 1),
         total=frames_to_process,
         desc=f"Processing {video_title}",
+        unit="frames",
+        colour="#E44CD2",
     ):
         ret, img = cap.read()
         if ret == False:
