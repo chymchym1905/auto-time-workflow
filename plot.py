@@ -40,6 +40,8 @@ def plot(data, filename):
     TRANSITION2indices = [
         i for i, val in enumerate(data) if "transition-screen-2" in val
     ]
+    STARTindices = [i for i, val in enumerate(data) if "start" in val]
+    ENDindicies = [i for i, val in enumerate(data) if "end" in val]
 
     ax: Axes
     fig, ax = plt.subplots(figsize=(30, 6))
@@ -136,6 +138,28 @@ def plot(data, filename):
         rotation="horizontal",
         color="white",
     )
+
+    for i, frame in enumerate(STARTindices):
+        ax.annotate(
+            f"Frame {frame}",
+            xy=(frame, 0.1),
+            xytext=(frame + 5, 0.05),
+            arrowprops=dict(arrowstyle="->", linewidth=1, color="white"),
+            horizontalalignment="center",
+            verticalalignment="top",
+            color="white",
+        )
+
+    for i, frame in enumerate(ENDindicies):
+        ax.annotate(
+            f"Frame {frame}",
+            xy=(frame, 0.1),
+            xytext=(frame + 5, 0.05),
+            arrowprops=dict(arrowstyle="->", linewidth=1, color="red"),
+            horizontalalignment="center",
+            verticalalignment="top",
+            color="red",
+        )
 
     # Set limits and labels
     ax.set_xlim(0, len(data))

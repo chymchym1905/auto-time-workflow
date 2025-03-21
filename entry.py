@@ -158,7 +158,6 @@ def timeonevideo(videourl, numchamber, vidsegment: list[str]):
                     time += segmenttime
                     continue
                 timeresult = infer(f"downloads/{filename}", gpu, vidsegment[index])
-                video_result["objects_present"] += timeresult
                 segmenttime = timerunsv2(
                     numchamber / len(vidsegment),
                     filename,
@@ -166,6 +165,7 @@ def timeonevideo(videourl, numchamber, vidsegment: list[str]):
                     timeresult,
                     save=True if len(vidsegment) > 1 else False,
                 )
+                video_result["objects_present"] += timeresult
                 time += segmenttime
             video_result["time"] = time
             plot(video_result["objects_present"], f"{video_id}${currsegmenttext}$")

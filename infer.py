@@ -92,7 +92,7 @@ def infer(vidpath, gpu, segment="NA-NA"):
         start_frame = int(processed_segments[0] * fps)
         end_frame = int(processed_segments[1] * fps)
     cap.set(cv2.CAP_PROP_POS_FRAMES, start_frame)
-    frames_to_process = end_frame - start_frame + 1
+    frames_to_process = end_frame - start_frame
     outputpath = rf"videos/{video_title}${segment}$annotated.mp4"
     print(
         f"Processing frames {start_frame} to {end_frame} (total: {frames_to_process})"

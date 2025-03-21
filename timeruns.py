@@ -125,6 +125,13 @@ def find_skill_icons(objects: list, icon, gaps, start, end):
     return skill_icons
 
 
+def addstartend(objects: list, starts, ends):
+    for i in starts:
+        objects[i] += ["start"]
+    for i in ends:
+        objects[i] += ["end"]
+
+
 def verify_run(object_list, fps, numchambers, title):
     icon = find_platform(object_list)
     start, end = find_start_end(object_list, icon)
@@ -135,6 +142,7 @@ def verify_run(object_list, fps, numchambers, title):
     print("Starting frames: ", starts)
     ends = [x for (x, y) in gaps] + [end]
     print("Ending frames: ", ends)
+    addstartend(object_list, starts, ends)
     if len(starts) != len(ends):
         raise ValueError("Bad video error")
     chambers: list[Chamber] = []
