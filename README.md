@@ -31,7 +31,7 @@ pip install pytorch
 ```
 
 
-Go to https://github.com/cisco/openh264/releases, download the openh264 dll and put into cv2 package folder. Openh264 codec is needed to encode output video in mp4, if you don't want to you could use XVID in infer.py
+Go to https://github.com/cisco/openh264/releases, download the openh264 dll and put into cv2 package folder IF you need standard mp4 format. Installing Openh264 is required to export inferred video in AVC1 codec (mp4 format), or else OpenCV won't export the video. You can just use XVID (avi or mkv format) and not bother with openh264, as long as you don't bother with video codec problem.
 
 Go to https://ffmpeg.org/, download and add ffmpeg binary to environment variables. FFMPEG is not needed with new verion of the script
 
