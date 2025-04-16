@@ -8,10 +8,20 @@ YOLOv8 model, Paperspace workflows
 In order to run this script, you need might need to install OpenH624 for opencv. Put open264 dll inside 
 `AppData\Local\Programs\Python\Python310\Lib\site-packages\cv2` or the location that contains opencv
 
-Run:
+Install Python at least 3.8 and install the required package. Virutal environment is optional
+Windows venv:
+```
+py -m venv .venv
+.venv\Scripts\activate.bat
+```
+Mac or Linux (py for windows and python or python3 for Mac/Linux):
+```
+python -m venv .venv
+source .venv/bin/activate
+```
 ```cmd
 pip install -U -r requirements.txt
-
+```
 // Don't need to install CUDA toolkit if you are just inferencing
 Go to https://pytorch.org/get-started/locally/ and install torch with the corresponding CUDA version
 pip install pytorch (if not training using gpu, if you are training it's required
@@ -24,6 +34,8 @@ you could use XVID in infer.py
 Go to https://ffmpeg.org/, download and add ffmpeg binary to environment variables
 FFMPEG is not needed with new verion of the script
 
+Run this to fetch all unverified Abyss speedruns and start timing
+```
 py entry.py
 ```
 
