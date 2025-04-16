@@ -11,6 +11,7 @@ In order to run this script, you need might need to install OpenH624 for opencv.
 Run:
 ```cmd
 pip install -U -r requirements.txt
+// Don't need to install CUDA toolkit for inferencing
 
 Go to https://pytorch.org/get-started/locally/ and install torch with the corresponding CUDA version
 
