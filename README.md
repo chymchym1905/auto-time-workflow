@@ -8,7 +8,7 @@ YOLOv8 model, Paperspace workflows
 In order to run this script, you need might need to install OpenH624 for opencv. Put open264 dll inside 
 `AppData\Local\Programs\Python\Python310\Lib\site-packages\cv2` or the location that contains opencv
 
-Install Python at least 3.8 and install the required package. Virutal environment is optional
+Install Python at least 3.8 and install the required package. Virtual environment is optional
 
 Windows venv:
 ```
