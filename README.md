@@ -19,10 +19,11 @@ Mac or Linux (py for windows and python or python3 for Mac/Linux):
 python -m venv .venv
 source .venv/bin/activate
 ```
+Install required packages:
 ```cmd
 pip install -U -r requirements.txt
 ```
-Go to https://pytorch.org/get-started/locally/ and install torch with the corresponding CUDA version. If you are not training using gpu, just install pytorch normally, if you are training it's required to install CUDA Toolkit and cuDNN and follow instructions at pytorch website to install the according pytorch package
+Go to [Pytorch website](https://pytorch.org/get-started/locally/) and install torch with the corresponding CUDA version. If you are not training using gpu, just install pytorch normally, if you are training it's required to install CUDA Toolkit and cuDNN and follow instructions at pytorch website to install the according pytorch package
 
 No training:
 ```
@@ -34,7 +35,7 @@ Go to https://github.com/cisco/openh264/releases, download the openh264 dll and 
 
 Go to https://ffmpeg.org/, download and add ffmpeg binary to environment variables. FFMPEG is not needed with new verion of the script
 
-Run this to fetch all unverified Abyss speedruns and start timing
+Run this to fetch all unverified Abyss speedruns and start timing:
 ```
 py entry.py
 ```
