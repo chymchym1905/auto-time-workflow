@@ -35,6 +35,8 @@ Go to https://github.com/cisco/openh264/releases, download the openh264 dll and 
 
 Go to https://ffmpeg.org/, download and add ffmpeg binary to environment variables. FFMPEG is not needed with new verion of the script
 
+Create a folder auth and 2 files email.txt and password.txt inside the folder containing login information of your The Golden House account.
+
 Run this to fetch all unverified Abyss speedruns and start timing:
 ```
 py entry.py
