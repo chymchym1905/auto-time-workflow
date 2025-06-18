@@ -79,7 +79,8 @@ def infer(vidpath, gpu, segment="NA-NA"):
     total_frames = int(cap.get(cv2.CAP_PROP_FRAME_COUNT))
     objects_present = []
     # Define codec and create VideoWriter object to save annotated video
-    codec = "avc1" if gpu == True else "XVID"
+    # codec = "avc1" if gpu == True else "XVID"
+    codec = "avc1"
     fourcc = cv2.VideoWriter_fourcc(*codec)  # Codec for the output video
     # temppath = r'videos/temp.mp4' if gpu==True else r'videos/temp.avi'
 
