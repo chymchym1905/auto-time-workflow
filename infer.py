@@ -1,8 +1,8 @@
+import os
 import cv2
 from ultralytics import YOLO
 from ultralytics.engine.results import Results
 import numpy as np
-import os
 import torch
 import pickle
 from tqdm import tqdm
@@ -68,9 +68,6 @@ def infer(vidpath, gpu, segment="NA-NA"):
     if video_title == None:
         return
     # do not touch
-    if not os.path.exists("videos"):
-        os.makedirs("videos")
-
     cap = cv2.VideoCapture(vidpath)
     # Get video details
     frame_width = int(cap.get(cv2.CAP_PROP_FRAME_WIDTH))
@@ -200,8 +197,6 @@ def infer(vidpath, gpu, segment="NA-NA"):
     # if os.path.exists(outputpath):
     #     os.remove(outputpath)
     # os.rename(temppath, outputpath)
-    if not os.path.exists("framedata"):
-        os.makedirs("framedata")
     with open(f"framedata/{video_title}${segment}$.pkl", "wb") as f:
         pickle.dump(objects_present, f)
     # plot.plot(objects_present, video_title)

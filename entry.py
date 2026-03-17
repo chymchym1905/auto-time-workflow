@@ -22,6 +22,14 @@ email = ""
 password = ""
 MAINURL = "https://genshin.tghofficial.com/api"
 TESTURL = "http://localhost:3001/api"
+if not os.path.exists("results"):
+    os.makedirs("results")
+if not os.path.exists("downloads"):
+    os.makedirs("downloads")
+if not os.path.exists("videos"):
+    os.makedirs("videos")
+if not os.path.exists("framedata"):
+    os.makedirs("framedata")
 with open("auth/password.txt", "r") as f:
     password = f.read()
 
@@ -132,6 +140,7 @@ def timeonevideo(videourl, numchamber, vidsegment: list[str]):
             "outtmpl": "%(id)s.%(ext)s",
             "overwrite": True,
             "format_sort": ["res:1080"],
+            "js_runtimes": {"node": {"path": r"C:\nvm4w\nodejs\node.exe"}},
             # "verbose": True,
             # "proxy": "34.92.250.88:10000",
             # 'listformats':True,
